@@ -1,0 +1,12 @@
+#!/bin/sh
+
+for x in $(poudriere jail -l | grep -v JAILNAME | awk '{ print $1 }' | sort -n) ; do
+  poudriere bulk -C -t -j ${x} $1
+  if [ $? -ne 0 ]; then
+    figlet FAIL ; echo ^G
+    exit 1
+  fi
+done
+
+figlet Success\! ; echo ^G
+exit 0

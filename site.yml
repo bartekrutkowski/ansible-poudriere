@@ -1,0 +1,5 @@
+---
+# This playbook installs complete Poudriere testing suite ideal for
+# FreeBSD Ports development
+
+- include: poudriere.yml

@@ -1,0 +1,9 @@
+poudriere_hostname: your poudriere host name goes here, eg: poudriere.example.com
+zpool: your ZFS pool name, eg: zroot
+zrootfs: your poudriere root directory, eg: /pd
+use_tmpfs: depends on your host memory available, eg: all
+ccache_dir: ccache directory to use, eg: "{{ zrootfs }}/ccache"
+parallel_jobs: depends on your host CPU's available, eg: 8
+make_jobs_number: depends on your host CPU's available, eg: 8
+allow_make_jobs: depends on your host CPU's available, eg: yes
+nginx_listen_port: depends on your needs and/or network topology and configuration, eg: 80

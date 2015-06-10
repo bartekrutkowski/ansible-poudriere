@@ -1,0 +1,64 @@
+---
+# This playbook will install Poudriere and set it up
+
+- name: Install required packages
+  pkgng: name={{ item }} state=present
+  with_items:
+  - poudriere-devel
+  - nginx-devel
+  - php5-arcanist
+  - subversion
+  - figlet
+  register: pkg
+
+- name: Create 'tp' script
+  copy: src=tp dest=/usr/local/bin/tp
+
+- name: Create 'poudriere.conf' file
+  template: src=poudriere.conf.j2 dest=/usr/local/etc/poudriere.conf
+  register: poudriere_conf
+  when: pkg | success
+
+- name: Create Poudriere jails 'make.conf' file
+  copy: src=poudriere_make.conf dest=/usr/local/etc/poudriere.d/make.conf
+  when: poudriere_conf | success
+
+- name: Create 'nginx.conf' file
+  template: src=nginx.conf.j2 dest=/usr/local/etc/nginx/nginx.conf
+  register: nginx_conf
+  when: poudriere_conf | success
+
+- name: Create '/root/.subversion' dir
+  file: path=/root/.subversion state=directory
+  register: subversion_dir
+
+- name: Create Subversion config file
+  copy: src=subversion_config dest=/root/.subversion/config
+  when: subversion_dir | success
+
+- name: Update Poudriere jails
+  command: poudriere jail -u -q -j {{ item.name }}{{ item.architecture }}
+  with_items:
+  - { architecture: 'amd64', version: '10.1-RELEASE', name: '101' }
+  - { architecture: 'i386', version: '10.1-RELEASE', name: '101' }
+  - { architecture: 'amd64', version: '9.3-RELEASE', name: '93' }
+  - { architecture: 'i386', version: '9.3-RELEASE', name: '93' }
+  when: poudriere_conf | success
+  register: update_jails
+  ignore_errors: yes
+  changed_when: '"No updates are available to install." not in update_jails.stdout'
+
+- name: Create Poudriere jails
+  command: poudriere jail -c -q -a {{ item.item.architecture }} -v {{ item.item.version }} -j {{ item.item.name }}{{ item.item.architecture }}
+  with_items: update_jails.results
+  when: update_jails | failed
+
+- name: Update Poudriere ports tree
+  command: poudriere ports -u -m svn
+  when: poudriere_conf | success
+  register: update_ports
+
+- name: Create Poudriere ports tree
+  command: poudriere ports -c -m svn
+  when: update_ports | failed
+

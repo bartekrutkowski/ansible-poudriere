@@ -1,0 +1,75 @@
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log  info;
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+
+    keepalive_timeout  65;
+
+    # Allow gzipping js, css, log, svg and json files.
+    gzip on;
+    gzip_http_version 1.0;
+    gzip_comp_level 6;
+    gzip_proxied any;
+    gzip_min_length  1100;
+    gzip_buffers 16 8k;
+    gzip_types text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript image/gif image/jpeg image/png application/json image/svg+xml;
+
+    types {
+        application/json                     json;
+        text/plain                            log;
+    }
+
+    server {
+        listen       {{ nginx_listen_port }};
+        server_name  {{ poudriere_hostname }};
+
+        access_log  /var/log/nginx/{{ poudriere_hostname }}.access.log  main;
+
+        root         /usr/local/share/poudriere/html;
+
+        location /data {
+                alias {{ zrootfs }}/data/logs/bulk;
+
+                # Allow caching dynamic files but ensure they get rechecked
+                location ~* ^.+\.(log|txz|tbz|bz2|gz)$ {
+                        add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+                }
+
+                # Don't log json requests as they come in frequently and ensure
+                # caching works as expected
+                location ~* ^.+\.(json)$ {
+                        add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+                        access_log off;
+                        log_not_found off;
+                }
+
+                # Allow indexing only in log dirs
+                location ~ /data/?.*/(logs|latest-per-pkg)/ {
+                        autoindex on;
+                }
+
+                break;
+        }
+
+    location {{ zrootfs }} {
+            root   {{ zrootfs }}/data/packages/;
+            autoindex on;
+        }
+    }
+}
