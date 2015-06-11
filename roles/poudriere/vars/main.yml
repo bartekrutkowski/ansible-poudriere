@@ -1,9 +1,12 @@
 poudriere_hostname: your poudriere host name goes here, eg: poudriere.example.com
-zpool: your ZFS pool name, eg: zroot
-zrootfs: your poudriere root directory, eg: /pd
-use_tmpfs: depends on your host memory available, eg: all
-ccache_dir: ccache directory to use, eg: "{{ zrootfs }}/ccache"
-parallel_jobs: depends on your host CPU's available, eg: 8
-make_jobs_number: depends on your host CPU's available, eg: 8
-allow_make_jobs: depends on your host CPU's available, eg: yes
-nginx_listen_port: depends on your needs and/or network topology and configuration, eg: 80
+poudriere_zpool: your ZFS pool name, eg: zroot
+poudriere_zrootfs: your poudriere root directory, eg: /pd
+poudriere_use_tmpfs: depends on your host memory available, eg: all
+poudriere_ccache_dir: ccache directory to use, eg: "{{ zrootfs  }}/ccache"
+poudriere_parallel_jobs: depends on your host CPU's available, eg: 8
+poudriere_make_jobs_number: depends on your host CPU's available, eg: 8
+poudriere_allow_make_jobs: depends on your host CPU's available, eg: yes
+poudriere_url_base: "http://{{ poudriere_hostname  }}"
+poudriere_prepare_parallel_jobs_number: depends on your host CPU's and disk IO speeds, eg: 2
+nginx_listen_port: depends on your needs and/or network topology and configuration, eg:80
+nginx_server_name: "{{ poudriere_hostname  }}"

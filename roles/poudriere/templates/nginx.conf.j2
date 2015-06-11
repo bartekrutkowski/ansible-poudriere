@@ -37,14 +37,14 @@ http {
 
     server {
         listen       {{ nginx_listen_port }};
-        server_name  {{ poudriere_hostname }};
+        server_name  {{ nginx_server_name }};
 
-        access_log  /var/log/nginx/{{ poudriere_hostname }}.access.log  main;
+        access_log  /var/log/nginx/{{ nginx_server_name }}.access.log  main;
 
         root         /usr/local/share/poudriere/html;
 
         location /data {
-                alias {{ zrootfs }}/data/logs/bulk;
+                alias {{ poudriere_zrootfs }}/data/logs/bulk;
 
                 # Allow caching dynamic files but ensure they get rechecked
                 location ~* ^.+\.(log|txz|tbz|bz2|gz)$ {
@@ -67,8 +67,8 @@ http {
                 break;
         }
 
-    location {{ zrootfs }} {
-            root   {{ zrootfs }}/data/packages/;
+    location {{ poudriere_zrootfs }} {
+            root   {{ poudriere_zrootfs }}/data/packages/;
             autoindex on;
         }
     }

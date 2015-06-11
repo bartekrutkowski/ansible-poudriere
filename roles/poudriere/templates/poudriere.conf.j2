@@ -11,14 +11,14 @@
 # You need at least 7GB of free space in this pool to have a working
 # poudriere.
 #
-ZPOOL={{ zpool }}
+ZPOOL={{ poudriere_zpool }}
 
 ### NO ZFS
 # To not use ZFS, define NO_ZFS=yes
 #NO_ZFS=yes
 
 # root of the poudriere zfs filesystem, by default /poudriere
-ZROOTFS={{ zrootfs }}
+ZROOTFS={{ poudriere_zrootfs }}
 
 # the host where to download sets for the jails setup
 # You can specify here a host or an IP
@@ -64,7 +64,7 @@ USE_PORTLINT=yes
 # all       - Run the entire build in memory, including builder jails.
 # yes       - Only enables tmpfs(5) for wrkdir
 # EXAMPLE: USE_TMPFS="wrkdir data"
-USE_TMPFS={{ use_tmpfs }}
+USE_TMPFS={{ poudriere_use_tmpfs }}
 
 # How much memory to limit tmpfs size to for *each builder* in GiB
 # (default: none)
@@ -112,7 +112,7 @@ DISTFILES_CACHE=/usr/ports/distfiles
 
 # ccache support. Supply the path to your ccache cache directory.
 # It will be mounted into the jail and be shared among all jails.
-CCACHE_DIR={{ ccache_dir }}
+CCACHE_DIR={{ poudriere_ccache_dir }}
 
 # parallel build support.
 #
@@ -121,12 +121,12 @@ CCACHE_DIR={{ ccache_dir }}
 # by specifying the -J flag to bulk/testport.
 #
 # Example to define PARALLEL_JOBS to one single job
-PARALLEL_JOBS={{ parallel_jobs }}
-MAKE_JOBS_NUMBER={{ make_jobs_number }}
+PARALLEL_JOBS={{ poudriere_parallel_jobs }}
+MAKE_JOBS_NUMBER={{ poudriere_make_jobs_number }}
 
 # How many jobs should be used for preparing the build? These tend to
 # be more IO bound and may be worth tweaking. Default: Same as PARALLEL_JOBS
-#PREPARE_PARALLEL_JOBS=2
+#PREPARE_PARALLEL_JOBS={{ poudriere_prepare_parallel_jobs_number }}
 
 
 # If set, failed builds will save the WRKDIR to ${POUDRIERE_DATA}/wrkdirs
@@ -156,7 +156,7 @@ MAKE_JOBS_NUMBER={{ make_jobs_number }}
 
 # By default MAKE_JOBS is disabled to allow only one process per cpu
 # Use the following to allow it anyway
-ALLOW_MAKE_JOBS={{ allow_make_jobs }}
+ALLOW_MAKE_JOBS={{ poudriere_allow_make_jobs }}
 
 # List of packages that will always be allowed to use MAKE_JOBS
 # regardless of ALLOW_MAKE_JOBS. This is useful for allowing ports
@@ -171,7 +171,7 @@ ALLOW_MAKE_JOBS={{ allow_make_jobs }}
 # URL where your POUDRIERE_DATA/logs are hosted
 # This will be used for giving URL hints to the HTML output when
 # scheduling and starting builds
-URL_BASE=http://{{ poudriere_hostname }}
+URL_BASE={{ poudriere_url_base }}
 
 
 # This defines the max time (in seconds) that a command may run for a build
