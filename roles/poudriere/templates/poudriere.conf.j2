@@ -37,7 +37,7 @@ FREEBSD_HOST=_PROTO_://_CHANGE_THIS_
 RESOLV_CONF=/etc/resolv.conf
 
 # The directory where poudriere will store jails and ports
-BASEFS=/pd
+BASEFS={{ poudriere_zrootfs }}
 
 # The directory where the jail will store the packages and logs
 # by default a zfs filesystem will be created and set to
