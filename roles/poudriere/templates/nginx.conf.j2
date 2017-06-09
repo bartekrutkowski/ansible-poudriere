@@ -67,8 +67,8 @@ http {
                 break;
         }
 
-    location {{ poudriere_zrootfs }} {
-            root   {{ poudriere_zrootfs }}/data/packages/;
+        location {{ poudriere_zrootfs }} {
+            alias {{ poudriere_zrootfs }}/data/packages/;
             autoindex on;
         }
     }
